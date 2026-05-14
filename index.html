@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dream List</title>
+<style>
+  :root {
+    --cream: #f7f3ec;
+    --cream-deep: #efe9df;
+    --white: #ffffff;
+    --ink: #2b2823;
+    --muted: #a59c8e;
+    --line: #ebe5d9;
+    --accent: #d9c9a8;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(60,40,10,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .status {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--muted);
+  }
+  .status.live .dot { background: #6fb36c; }
+  .status.error .dot { background: #d9776c; }
+
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    align-items: center;
+  }
+  .chip {
+    background: var(--white);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.active {
+    background: var(--ink);
+    color: var(--white);
+    border-color: var(--ink);
+  }
+  .chip.add-cat {
+    border-style: dashed;
+    color: var(--muted);
+  }
+  .chip.add-cat:hover { color: var(--ink); }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--white);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s ease;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-text {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-text:hover { color: var(--ink); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, opacity 0.2s ease;
+    position: relative;
+  }
+  .card.bought { opacity: 0.55; }
+  .card.bought .card-name { text-decoration: line-through; }
+
+  .card-bar {
+    background: var(--white);
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .card-top-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .card-name {
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .card-price {
+    font-size: 14px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .card-cat {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+  }
+
+  .carousel {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--cream-deep);
+    overflow: hidden;
+  }
+  .carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.3s ease;
+    width: 100%;
+  }
+  .carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--cream-deep);
+  }
+  .carousel-empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    background: var(--cream-deep);
+  }
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px);
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--ink);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: opacity 0.15s ease;
+  }
+  .carousel-arrow:hover { opacity: 0.85; }
+  .carousel-arrow.prev { left: 10px; }
+  .carousel-arrow.next { right: 10px; }
+  .carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+  }
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    transition: background 0.15s ease;
+  }
+  .carousel-dot.active { background: var(--white); }
+
+  .card-actions {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px 14px;
+    align-items: center;
+  }
+  .tick-btn {
+    flex: 1;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tick-btn:hover { border-color: var(--accent); }
+  .card.bought .tick-btn {
+    background: #e8efe5;
+    border-color: #c9d8c1;
+    color: #4a6b3d;
+  }
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    transition: all 0.15s ease;
+  }
+  .icon-btn:hover { color: var(--ink); border-color: var(--accent); }
+
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .empty h3 {
+    color: var(--ink);
+    font-weight: 500;
+    margin: 0 0 8px;
+  }
+  .empty code {
+    background: var(--white);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(43,40,35,0.4);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--cream);
+    color: var(--ink);
+    transition: border-color 0.15s ease;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--white);
+  }
+  .image-input-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .image-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  .image-thumb .remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--ink);
+    color: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .upload-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: var(--cream);
+    border: 1px dashed var(--line);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 24px;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .upload-btn:hover { border-color: var(--accent); color: var(--ink); }
+  .upload-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-secondary:hover { color: var(--ink); }
+
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .hint a { color: var(--ink); }
+
+  /* Password gate */
+  .gate {
+    position: fixed; inset: 0;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 24px;
+  }
+  .gate-box {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .gate-box h2 {
+    margin: 0 0 6px;
+    font-weight: 500;
+    font-size: 22px;
+  }
+  .gate-box p {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 22px;
+  }
+  .gate-box input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 14px;
+    font-family: inherit;
+    text-align: center;
+    background: var(--cream);
+    margin-bottom: 12px;
+  }
+  .gate-box input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--white);
+  }
+  .gate-error {
+    color: #b8554a;
+    font-size: 12px;
+    min-height: 18px;
+  }
+
+  /* Setup needed screen */
+  .setup-screen {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 32px;
+    max-width: 600px;
+    margin: 24px auto;
+    box-shadow: var(--shadow);
+    line-height: 1.6;
+  }
+  .setup-screen h2 { margin-top: 0; font-weight: 500; }
+  .setup-screen code, .setup-screen pre {
+    background: var(--cream);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .setup-screen pre {
+    padding: 12px;
+    overflow-x: auto;
+    font-size: 11px;
+  }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 28px 16px 60px; }
+    h1 { font-size: 28px; }
+    .grid { grid-template-columns: 1fr; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Password gate -->
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <h2>Dream List</h2>
+    <p>Enter the shared password</p>
+    <input type="password" id="gatePwd" autocomplete="off" />
+    <div class="gate-error" id="gateError"></div>
+    <button class="btn-primary" style="width:100%; padding:11px;" onclick="tryUnlock()">Open</button>
+  </div>
+</div>
+
+<div class="wrap" id="app" style="display:none;">
+  <header>
+    <div>
+      <h1>Dream List</h1>
+      <div class="subtitle">things to buy, someday</div>
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">connecting…</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-text" onclick="logout()">Lock</button>
+      <button class="btn-primary" id="addBtn" onclick="openModal()">+ Add item</button>
+    </div>
+  </header>
+
+  <div class="toolbar" id="categoryBar"></div>
+
+  <div id="content"></div>
+</div>
+
+<!-- Add/Edit item modal -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h2 id="modalTitle">Add item</h2>
+    <div class="field">
+      <label>name</label>
+      <input type="text" id="itemName" placeholder="e.g. Marble cutting board" />
+    </div>
+    <div class="field">
+      <label>price</label>
+      <input type="text" id="itemPrice" placeholder="e.g. 89 or £89" />
+    </div>
+    <div class="field">
+      <label>category</label>
+      <select id="itemCategory"></select>
+    </div>
+    <div class="field">
+      <label>images (up to 3)</label>
+      <div class="image-input-group" id="imageGroup"></div>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" />
+      <div class="hint">Images are resized small (~700px, JPEG) so they fit in the shared database.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" id="saveBtn" onclick="saveItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // ========== CONFIG: edit these two things ==========
+
+  // 1) Shared password. Anyone who knows this can view/edit the list.
+  //    (This is a soft gate — see README.)
+  const SHARED_PASSWORD = "miebamaxxing";
+
+  // 2) Your Firebase web config. Get it from Firebase console
+  //    (Project settings → "Your apps" → Web app). See README for setup.
+  const firebaseConfig = {
+  apiKey: "AIzaSyC6ry2ERHMuseJaNjrLUUarBUGElVU3pXY",
+  authDomain: "snakebamboom.firebaseapp.com",
+  projectId: "snakebamboom",
+  storageBucket: "snakebamboom.firebasestorage.app",
+  messagingSenderId: "497187839157",
+  appId: "1:497187839157:web:6eb9026db28fda51af32fc"
+};
+
+  // ====================================================
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ---- State ----
+  let state = { categories: [], items: [], categoriesLoaded: false, itemsLoaded: false };
+  let activeCategory = 'All';
+  let editingId = null;
+  let currentImages = [];
+  let db = null;
+
+  // ---- Password gate ----
+  const UNLOCK_KEY = 'dreamlist_unlock_v1';
+
+  function isUnlocked() {
+    return localStorage.getItem(UNLOCK_KEY) === SHARED_PASSWORD;
+  }
+
+  window.tryUnlock = function() {
+    const v = document.getElementById('gatePwd').value;
+    if (v === SHARED_PASSWORD) {
+      localStorage.setItem(UNLOCK_KEY, v);
+      startApp();
+    } else {
+      document.getElementById('gateError').textContent = 'Wrong password.';
+      document.getElementById('gatePwd').value = '';
+    }
+  };
+
+  window.logout = function() {
+    localStorage.removeItem(UNLOCK_KEY);
+    location.reload();
+  };
+
+  document.getElementById('gatePwd').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tryUnlock();
+  });
+
+  function startApp() {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = '';
+
+    if (!firebaseConfig.projectId) {
+      showSetupScreen();
+      return;
+    }
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      setStatus('connecting', 'connecting…');
+
+      onSnapshot(collection(db, "items"), (snap) => {
+        state.items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        state.items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        state.itemsLoaded = true;
+        checkLive();
+        render();
+      }, (err) => {
+        console.error(err);
+        setStatus('error', 'connection error');
+      });
+
+      onSnapshot(doc(db, "meta", "config"), (snap) => {
+        state.categories = (snap.exists() && snap.data().categories) || ['Kitchen', 'Bedroom', 'Furniture'];
+        state.categoriesLoaded = true;
+        checkLive();
+        render();
+      }, (err) => {
+        console.error(err);
+        setStatus('error', 'connection error');
+      });
+    } catch (err) {
+      console.error(err);
+      showSetupScreen();
+    }
+  }
+
+  function checkLive() {
+    if (state.itemsLoaded && state.categoriesLoaded) {
+      setStatus('live', 'live · synced');
+    }
+  }
+
+  function setStatus(cls, text) {
+    const el = document.getElementById('status');
+    el.className = 'status ' + cls;
+    document.getElementById('statusText').textContent = text;
+  }
+
+  function showSetupScreen() {
+    document.getElementById('content').innerHTML = `
+      <div class="setup-screen">
+        <h2>One last setup step</h2>
+        <p>This site needs a (free) Firebase project to share data between you and your partner.
+        Once you've followed the steps in the <code>README.md</code>, paste your Firebase config
+        and a shared password into the top of <code>index.html</code>:</p>
+        <pre>const SHARED_PASSWORD = "your-password";
+
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  projectId: "...",
+  ...
+};</pre>
+        <p>Then commit and push — GitHub Pages will pick it up automatically.</p>
+      </div>
+    `;
+    setStatus('error', 'not configured');
+  }
+
+  // ---- Render ----
+  function render() {
+    renderCategories();
+    renderItems();
+  }
+
+  function renderCategories() {
+    const bar = document.getElementById('categoryBar');
+    bar.innerHTML = '';
+
+    bar.appendChild(chipEl('All', activeCategory === 'All', () => {
+      activeCategory = 'All'; render();
+    }));
+
+    state.categories.forEach(cat => {
+      const chip = chipEl(cat, activeCategory === cat, () => {
+        activeCategory = cat; render();
+      });
+      chip.oncontextmenu = async (e) => {
+        e.preventDefault();
+        if (confirm(`Delete the "${cat}" category? Items in it stay but become uncategorized.`)) {
+          state.categories = state.categories.filter(c => c !== cat);
+          if (activeCategory === cat) activeCategory = 'All';
+          await setDoc(doc(db, "meta", "config"), { categories: state.categories });
+          // also update affected items
+          const toUpdate = state.items.filter(it => it.category === cat);
+          for (const it of toUpdate) {
+            await setDoc(doc(db, "items", it.id), { ...it, category: '' });
+          }
+        }
+      };
+      bar.appendChild(chip);
+    });
+
+    const addChip = chipEl('+ category', false, addCategory);
+    addChip.classList.add('add-cat');
+    bar.appendChild(addChip);
+  }
+
+  function chipEl(label, active, onClick) {
+    const b = document.createElement('button');
+    b.className = 'chip' + (active ? ' active' : '');
+    b.textContent = label;
+    b.onclick = onClick;
+    return b;
+  }
+
+  async function addCategory() {
+    const name = prompt('New category name:');
+    if (!name) return;
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    if (state.categories.includes(trimmed)) {
+      alert('That category already exists.');
+      return;
+    }
+    state.categories.push(trimmed);
+    await setDoc(doc(db, "meta", "config"), { categories: state.categories });
+  }
+
+  function renderItems() {
+    const content = document.getElementById('content');
+    const items = activeCategory === 'All'
+      ? state.items
+      : state.items.filter(it => it.category === activeCategory);
+
+    if (items.length === 0) {
+      content.innerHTML = `
+        <div class="empty">
+          <h3>No items here yet</h3>
+          <div>Click "+ Add item" to start your list.</div>
+        </div>`;
+      return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    items.forEach(item => grid.appendChild(cardEl(item)));
+    content.innerHTML = '';
+    content.appendChild(grid);
+  }
+
+  function cardEl(item) {
+    const card = document.createElement('div');
+    card.className = 'card' + (item.bought ? ' bought' : '');
+
+    const bar = document.createElement('div');
+    bar.className = 'card-bar';
+    const topRow = document.createElement('div');
+    topRow.className = 'card-top-row';
+    const name = document.createElement('div');
+    name.className = 'card-name';
+    name.textContent = item.name || 'Untitled';
+    const price = document.createElement('div');
+    price.className = 'card-price';
+    price.textContent = formatPrice(item.price);
+    topRow.appendChild(name);
+    topRow.appendChild(price);
+    const cat = document.createElement('div');
+    cat.className = 'card-cat';
+    cat.textContent = item.category || 'uncategorized';
+    bar.appendChild(topRow);
+    bar.appendChild(cat);
+    card.appendChild(bar);
+
+    card.appendChild(carouselEl(item));
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    const tick = document.createElement('button');
+    tick.className = 'tick-btn';
+    tick.innerHTML = item.bought ? '✓ Bought' : 'Mark as bought';
+    tick.onclick = async () => {
+      const updated = { ...item, bought: !item.bought };
+      delete updated.id;
+      await setDoc(doc(db, "items", item.id), updated);
+    };
+    const edit = document.createElement('button');
+    edit.className = 'icon-btn';
+    edit.title = 'Edit';
+    edit.innerHTML = '✎';
+    edit.onclick = () => openModal(item.id);
+    const del = document.createElement('button');
+    del.className = 'icon-btn';
+    del.title = 'Delete';
+    del.innerHTML = '×';
+    del.style.fontSize = '18px';
+    del.onclick = async () => {
+      if (confirm('Delete this item?')) {
+        await deleteDoc(doc(db, "items", item.id));
+      }
+    };
+    actions.appendChild(tick);
+    actions.appendChild(edit);
+    actions.appendChild(del);
+    card.appendChild(actions);
+
+    return card;
+  }
+
+  function carouselEl(item) {
+    const wrap = document.createElement('div');
+    wrap.className = 'carousel';
+    const images = item.images || [];
+    if (images.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'carousel-empty';
+      empty.textContent = 'no images';
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    const track = document.createElement('div');
+    track.className = 'carousel-track';
+    images.forEach(src => {
+      const slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      slide.style.backgroundImage = `url("${src}")`;
+      track.appendChild(slide);
+    });
+    wrap.appendChild(track);
+
+    if (images.length > 1) {
+      let idx = 0;
+      const dots = document.createElement('div');
+      dots.className = 'carousel-dots';
+      images.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dots.appendChild(dot);
+      });
+      const go = (newIdx) => {
+        idx = (newIdx + images.length) % images.length;
+        track.style.transform = `translateX(-${idx * 100}%)`;
+        Array.from(dots.children).forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+      };
+      const prev = document.createElement('button');
+      prev.className = 'carousel-arrow prev';
+      prev.innerHTML = '‹';
+      prev.onclick = (e) => { e.stopPropagation(); go(idx - 1); };
+      const next = document.createElement('button');
+      next.className = 'carousel-arrow next';
+      next.innerHTML = '›';
+      next.onclick = (e) => { e.stopPropagation(); go(idx + 1); };
+      wrap.appendChild(prev);
+      wrap.appendChild(next);
+      wrap.appendChild(dots);
+
+      let startX = null;
+      wrap.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+      wrap.addEventListener('touchend', (e) => {
+        if (startX === null) return;
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
+        startX = null;
+      });
+    }
+
+    return wrap;
+  }
+
+  function formatPrice(p) {
+    if (p == null || p === '') return '';
+    if (/[£$€¥]/.test(p)) return p;
+    return '£' + p;
+  }
+
+  // ---- Modal ----
+  window.openModal = function(itemId) {
+    editingId = itemId || null;
+    document.getElementById('modalTitle').textContent = itemId ? 'Edit item' : 'Add item';
+    const item = itemId ? state.items.find(it => it.id === itemId) : null;
+    document.getElementById('itemName').value = item ? item.name : '';
+    document.getElementById('itemPrice').value = item ? item.price : '';
+    currentImages = item ? [...(item.images || [])] : [];
+
+    const sel = document.getElementById('itemCategory');
+    sel.innerHTML = '';
+    state.categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat; opt.textContent = cat;
+      if (item && item.category === cat) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    if (state.categories.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = ''; opt.textContent = '(no categories — add one first)';
+      sel.appendChild(opt);
+    }
+
+    renderImageGroup();
+    document.getElementById('modal').classList.add('open');
+    setTimeout(() => document.getElementById('itemName').focus(), 50);
+  };
+
+  window.closeModal = function() {
+    document.getElementById('modal').classList.remove('open');
+    editingId = null;
+    currentImages = [];
+  };
+
+  function renderImageGroup() {
+    const group = document.getElementById('imageGroup');
+    group.innerHTML = '';
+    currentImages.forEach((src, i) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'image-thumb';
+      thumb.style.backgroundImage = `url("${src}")`;
+      const x = document.createElement('button');
+      x.className = 'remove';
+      x.textContent = '×';
+      x.onclick = () => {
+        currentImages.splice(i, 1);
+        renderImageGroup();
+      };
+      thumb.appendChild(x);
+      group.appendChild(thumb);
+    });
+    if (currentImages.length < 3) {
+      const btn = document.createElement('button');
+      btn.className = 'upload-btn';
+      btn.textContent = '+';
+      btn.onclick = () => document.getElementById('fileInput').click();
+      group.appendChild(btn);
+    }
+  }
+
+  document.getElementById('fileInput').addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files || []);
+    for (const file of files) {
+      if (currentImages.length >= 3) break;
+      try {
+        const dataUrl = await resizeImage(file, 700, 0.75);
+        currentImages.push(dataUrl);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    e.target.value = '';
+    renderImageGroup();
+  });
+
+  function resizeImage(file, maxDim, quality) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round(height * (maxDim / width));
+              width = maxDim;
+            } else {
+              width = Math.round(width * (maxDim / height));
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = reject;
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  window.saveItem = async function() {
+    const name = document.getElementById('itemName').value.trim();
+    const price = document.getElementById('itemPrice').value.trim();
+    const category = document.getElementById('itemCategory').value;
+
+    if (!name) { alert('Give it a name first.'); return; }
+    if (!db) { alert('Not connected to the database yet.'); return; }
+
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+
+    try {
+      if (editingId) {
+        const item = state.items.find(it => it.id === editingId);
+        const updated = {
+          name, price, category,
+          images: [...currentImages],
+          bought: item ? !!item.bought : false,
+          createdAt: item ? (item.createdAt || Date.now()) : Date.now()
+        };
+        await setDoc(doc(db, "items", editingId), updated);
+      } else {
+        const id = 'i_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        await setDoc(doc(db, "items", id), {
+          name, price, category,
+          images: [...currentImages],
+          bought: false,
+          createdAt: Date.now()
+        });
+      }
+      closeModal();
+    } catch (err) {
+      console.error(err);
+      alert("Couldn't save: " + err.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save';
+    }
+  };
+
+  // ESC closes modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+  });
+
+  // Boot
+  if (isUnlocked()) {
+    startApp();
+  } else {
+    setTimeout(() => document.getElementById('gatePwd').focus(), 100);
+  }
+</script>
+</body>
+</html>
