@@ -6,21 +6,32 @@
 <title>Dream List</title>
 <style>
   :root {
-    --cream: #f7f3ec;
-    --cream-deep: #efe9df;
-    --white: #ffffff;
-    --ink: #2b2823;
-    --muted: #a59c8e;
-    --line: #ebe5d9;
-    --accent: #d9c9a8;
-    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(60,40,10,0.06);
+    --cream: #f5ede0;
+    --cream-deep: #ecdfc9;
+    --white: #fffaf0;
+    --ink: #E63A26;        /* stark red — primary text */
+    --ink-soft: #c5311f;
+    --muted: #d98a5c;      /* warm muted orange */
+    --line: #f0c9a4;
+    --accent: #F49306;     /* orange accent */
+    --hot-pink: #EE6A92;
+    --pink-soft: #F5CAE8;
+    --olive: #C9B749;
+    --lime: #A5BB1A;
+    --teal: #6DB8BE;
+    --mint: #9EC6AA;
+    --shadow: 0 2px 0 #E63A26, 0 4px 0 rgba(230,58,38,0.15);
   }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Georgia", "Times New Roman", serif;
     background: var(--cream);
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(244,147,6,0.08) 0, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(238,106,146,0.08) 0, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(165,187,26,0.05) 0, transparent 50%);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
@@ -41,32 +52,42 @@
     gap: 16px;
   }
   h1 {
-    font-size: 36px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
     margin: 0;
+    color: var(--ink);
+    text-transform: uppercase;
+    font-style: italic;
+    text-shadow: 3px 3px 0 var(--accent), 6px 6px 0 var(--hot-pink);
+    font-family: "Georgia", serif;
   }
   .subtitle {
-    color: var(--muted);
+    color: var(--ink-soft);
     font-size: 14px;
-    margin-top: 4px;
+    margin-top: 10px;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
   }
   .status {
     font-size: 11px;
-    color: var(--muted);
-    text-transform: lowercase;
-    letter-spacing: 0.04em;
-    margin-top: 4px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 8px;
     display: flex;
     align-items: center;
     gap: 6px;
+    font-weight: 700;
   }
   .status .dot {
-    width: 6px; height: 6px; border-radius: 50%;
+    width: 8px; height: 8px; border-radius: 50%;
     background: var(--muted);
+    box-shadow: 0 0 0 2px var(--cream), 0 0 0 3px var(--ink);
   }
-  .status.live .dot { background: #6fb36c; }
-  .status.error .dot { background: #d9776c; }
+  .status.live .dot { background: var(--lime); }
+  .status.error .dot { background: var(--hot-pink); }
 
   .header-actions { display: flex; gap: 8px; align-items: center; }
 
@@ -79,52 +100,66 @@
   }
   .chip {
     background: var(--white);
-    border: 1px solid var(--line);
+    border: 2px solid var(--ink);
     color: var(--ink);
-    padding: 8px 14px;
-    border-radius: 999px;
+    padding: 8px 16px;
+    border-radius: 4px;
     font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
     font-family: inherit;
     user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 2px 2px 0 var(--ink);
   }
-  .chip:hover { border-color: var(--accent); }
+  .chip:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
   .chip.active {
     background: var(--ink);
-    color: var(--white);
-    border-color: var(--ink);
+    color: var(--cream);
+    box-shadow: 2px 2px 0 var(--accent);
   }
   .chip.add-cat {
     border-style: dashed;
-    color: var(--muted);
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 2px 2px 0 var(--accent);
   }
-  .chip.add-cat:hover { color: var(--ink); }
+  .chip.add-cat:hover { color: var(--ink); border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
 
   .btn-primary {
     background: var(--ink);
-    color: var(--white);
-    border: none;
-    padding: 10px 18px;
-    border-radius: 999px;
+    color: var(--cream);
+    border: 2px solid var(--ink);
+    padding: 10px 20px;
+    border-radius: 4px;
     font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     cursor: pointer;
     font-family: inherit;
-    transition: opacity 0.15s ease;
+    transition: all 0.15s ease;
+    box-shadow: 3px 3px 0 var(--accent);
   }
-  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--accent); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-text {
     background: transparent;
-    color: var(--muted);
+    color: var(--ink-soft);
     border: none;
     padding: 6px 10px;
     font-size: 12px;
     cursor: pointer;
     font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
   }
-  .btn-text:hover { color: var(--ink); }
+  .btn-text:hover { color: var(--ink); text-decoration: underline; }
 
   .grid {
     display: grid;
@@ -134,24 +169,31 @@
 
   .card {
     background: var(--white);
-    border-radius: 14px;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: var(--shadow);
+    border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
     display: flex;
     flex-direction: column;
-    transition: transform 0.15s ease, opacity 0.2s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
     position: relative;
   }
+  .card:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+  .card:nth-child(4n+1) { box-shadow: 5px 5px 0 var(--ink); }
+  .card:nth-child(4n+1):hover { box-shadow: 7px 7px 0 var(--accent); }
+  .card:nth-child(4n+2):hover { box-shadow: 7px 7px 0 var(--hot-pink); }
+  .card:nth-child(4n+3):hover { box-shadow: 7px 7px 0 var(--lime); }
+  .card:nth-child(4n+4):hover { box-shadow: 7px 7px 0 var(--teal); }
   .card.bought { opacity: 0.55; }
   .card.bought .card-name { text-decoration: line-through; }
 
   .card-bar {
     background: var(--white);
     padding: 14px 16px 12px;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 2px solid var(--ink);
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
   }
   .card-top-row {
     display: flex;
@@ -160,26 +202,30 @@
     gap: 8px;
   }
   .card-name {
-    font-weight: 500;
-    font-size: 15px;
+    font-weight: 700;
+    font-size: 16px;
     color: var(--ink);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
   .card-price {
-    font-size: 14px;
-    color: var(--ink);
+    font-size: 15px;
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
+    font-weight: 900;
+    font-style: italic;
   }
   .card-cat {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 400;
-    text-transform: lowercase;
-    letter-spacing: 0.02em;
+    font-size: 10px;
+    color: var(--ink-soft);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
   }
 
   .carousel {
@@ -217,22 +263,22 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(8px);
-    border: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 18px;
+    font-weight: 900;
     color: var(--ink);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: opacity 0.15s ease;
+    box-shadow: 2px 2px 0 var(--ink);
+    transition: all 0.15s ease;
   }
-  .carousel-arrow:hover { opacity: 0.85; }
+  .carousel-arrow:hover { background: var(--accent); color: var(--cream); }
   .carousel-arrow.prev { left: 10px; }
   .carousel-arrow.next { right: 10px; }
   .carousel-dots {
@@ -241,16 +287,20 @@
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 5px;
+    gap: 6px;
+    background: var(--cream);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 2px solid var(--ink);
   }
   .carousel-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.6);
+    background: var(--pink-soft);
     transition: background 0.15s ease;
   }
-  .carousel-dot.active { background: var(--white); }
+  .carousel-dot.active { background: var(--ink); }
 
   .card-actions {
     display: flex;
@@ -261,11 +311,14 @@
   .tick-btn {
     flex: 1;
     background: var(--cream);
-    border: 1px solid var(--line);
+    border: 2px solid var(--ink);
     color: var(--ink);
     padding: 8px;
-    border-radius: 8px;
-    font-size: 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     cursor: pointer;
     font-family: inherit;
     transition: all 0.15s ease;
@@ -274,50 +327,57 @@
     justify-content: center;
     gap: 6px;
   }
-  .tick-btn:hover { border-color: var(--accent); }
+  .tick-btn:hover { background: var(--accent); color: var(--cream); }
   .card.bought .tick-btn {
-    background: #e8efe5;
-    border-color: #c9d8c1;
-    color: #4a6b3d;
+    background: var(--lime);
+    border-color: var(--ink);
+    color: var(--ink);
   }
   .icon-btn {
     background: transparent;
-    border: 1px solid var(--line);
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    border: 2px solid var(--ink);
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--muted);
+    color: var(--ink);
+    font-weight: 700;
     transition: all 0.15s ease;
   }
-  .icon-btn:hover { color: var(--ink); border-color: var(--accent); }
+  .icon-btn:hover { background: var(--hot-pink); color: var(--cream); }
 
   .empty {
     text-align: center;
     padding: 80px 20px;
-    color: var(--muted);
+    color: var(--ink-soft);
     font-size: 14px;
+    font-style: italic;
   }
   .empty h3 {
     color: var(--ink);
-    font-weight: 500;
+    font-weight: 900;
     margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-style: normal;
+    font-size: 22px;
   }
   .empty code {
     background: var(--white);
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 12px;
+    border: 2px solid var(--ink);
   }
 
   /* Modal */
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(43,40,35,0.4);
+    background: rgba(230,58,38,0.25);
     backdrop-filter: blur(4px);
     display: none;
     align-items: center;
@@ -327,44 +387,51 @@
   }
   .modal-backdrop.open { display: flex; }
   .modal {
-    background: var(--white);
-    border-radius: 14px;
+    background: var(--cream);
+    border-radius: 6px;
+    border: 3px solid var(--ink);
     width: 100%;
-    max-width: 440px;
+    max-width: 460px;
     padding: 28px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    box-shadow: 8px 8px 0 var(--ink);
     max-height: 90vh;
     overflow-y: auto;
   }
   .modal h2 {
     margin: 0 0 20px;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--ink);
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 0.02em;
   }
   .field { margin-bottom: 16px; }
   .field label {
     display: block;
-    font-size: 12px;
-    color: var(--muted);
+    font-size: 11px;
+    color: var(--ink);
     margin-bottom: 6px;
-    text-transform: lowercase;
-    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
   }
   .field input, .field select {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
-    background: var(--cream);
+    background: var(--white);
     color: var(--ink);
-    transition: border-color 0.15s ease;
+    transition: all 0.15s ease;
+    font-weight: 600;
   }
   .field input:focus, .field select:focus {
     outline: none;
-    border-color: var(--accent);
-    background: var(--white);
+    background: var(--cream);
+    box-shadow: 3px 3px 0 var(--accent);
   }
   .image-input-group {
     display: flex;
@@ -375,23 +442,24 @@
   .image-thumb {
     width: 60px;
     height: 60px;
-    border-radius: 8px;
+    border-radius: 4px;
     background-size: cover;
     background-position: center;
-    border: 1px solid var(--line);
+    border: 2px solid var(--ink);
     position: relative;
   }
   .image-thumb .remove {
     position: absolute;
-    top: -6px;
-    right: -6px;
+    top: -8px;
+    right: -8px;
     background: var(--ink);
-    color: white;
-    border: 2px solid white;
+    color: var(--cream);
+    border: 2px solid var(--cream);
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 11px;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    font-weight: 900;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -401,16 +469,17 @@
   .upload-btn {
     width: 60px;
     height: 60px;
-    border-radius: 8px;
-    background: var(--cream);
-    border: 1px dashed var(--line);
-    color: var(--muted);
+    border-radius: 4px;
+    background: var(--white);
+    border: 2px dashed var(--ink);
+    color: var(--ink);
     cursor: pointer;
-    font-size: 24px;
+    font-size: 28px;
+    font-weight: 900;
     font-family: inherit;
     transition: all 0.15s ease;
   }
-  .upload-btn:hover { border-color: var(--accent); color: var(--ink); }
+  .upload-btn:hover { background: var(--accent); color: var(--cream); border-style: solid; }
   .upload-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .modal-actions {
@@ -421,27 +490,34 @@
   }
   .btn-secondary {
     background: transparent;
-    color: var(--muted);
-    border: none;
+    color: var(--ink);
+    border: 2px solid transparent;
     padding: 10px 16px;
-    border-radius: 999px;
+    border-radius: 4px;
     font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     cursor: pointer;
     font-family: inherit;
   }
-  .btn-secondary:hover { color: var(--ink); }
+  .btn-secondary:hover { border-color: var(--ink); }
 
   .hint {
     font-size: 11px;
-    color: var(--muted);
-    margin-top: 6px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    font-style: italic;
   }
-  .hint a { color: var(--ink); }
+  .hint a { color: var(--ink); font-weight: 700; }
 
   /* Password gate */
   .gate {
     position: fixed; inset: 0;
     background: var(--cream);
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(244,147,6,0.15) 0, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(238,106,146,0.15) 0, transparent 50%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -450,43 +526,56 @@
   }
   .gate-box {
     background: var(--white);
-    border-radius: 14px;
-    padding: 36px 32px;
+    border-radius: 6px;
+    border: 3px solid var(--ink);
+    padding: 40px 32px;
     width: 100%;
-    max-width: 360px;
-    box-shadow: var(--shadow);
+    max-width: 380px;
+    box-shadow: 8px 8px 0 var(--ink);
     text-align: center;
   }
   .gate-box h2 {
-    margin: 0 0 6px;
-    font-weight: 500;
-    font-size: 22px;
+    margin: 0 0 8px;
+    font-weight: 900;
+    font-size: 32px;
+    color: var(--ink);
+    text-transform: uppercase;
+    font-style: italic;
+    text-shadow: 2px 2px 0 var(--accent);
   }
   .gate-box p {
-    color: var(--muted);
-    font-size: 13px;
-    margin: 0 0 22px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    margin: 0 0 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
   }
   .gate-box input {
     width: 100%;
-    padding: 11px 14px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
+    padding: 12px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
     text-align: center;
     background: var(--cream);
     margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--ink);
   }
   .gate-box input:focus {
     outline: none;
-    border-color: var(--accent);
     background: var(--white);
+    box-shadow: 3px 3px 0 var(--accent);
   }
   .gate-error {
-    color: #b8554a;
+    color: var(--hot-pink);
     font-size: 12px;
     min-height: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
   /* Setup needed screen */
@@ -567,10 +656,10 @@
       <select id="itemCategory"></select>
     </div>
     <div class="field">
-      <label>images (up to 3)</label>
+      <label>images</label>
       <div class="image-input-group" id="imageGroup"></div>
       <input type="file" id="fileInput" accept="image/*" multiple style="display:none" />
-      <div class="hint">Images are resized small (~700px, JPEG) so they fit in the shared database.</div>
+      <div class="hint">Add as many as you like — images are resized (~700px, JPEG) to fit the shared database.</div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal()">Cancel</button>
@@ -971,19 +1060,16 @@ const firebaseConfig = {
       thumb.appendChild(x);
       group.appendChild(thumb);
     });
-    if (currentImages.length < 3) {
-      const btn = document.createElement('button');
-      btn.className = 'upload-btn';
-      btn.textContent = '+';
-      btn.onclick = () => document.getElementById('fileInput').click();
-      group.appendChild(btn);
-    }
+    const btn = document.createElement('button');
+    btn.className = 'upload-btn';
+    btn.textContent = '+';
+    btn.onclick = () => document.getElementById('fileInput').click();
+    group.appendChild(btn);
   }
 
   document.getElementById('fileInput').addEventListener('change', async (e) => {
     const files = Array.from(e.target.files || []);
     for (const file of files) {
-      if (currentImages.length >= 3) break;
       try {
         const dataUrl = await resizeImage(file, 700, 0.75);
         currentImages.push(dataUrl);
