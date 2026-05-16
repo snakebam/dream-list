@@ -659,7 +659,7 @@
       <label>images</label>
       <div class="image-input-group" id="imageGroup"></div>
       <input type="file" id="fileInput" accept="image/*" multiple style="display:none" />
-      <div class="hint">Add as many as you like — images are resized (~700px, JPEG) to fit the shared database.</div>
+      <div class="hint">Add as many as you like — click + to upload, or just paste (Ctrl/Cmd+V) an image. Resized (~700px, JPEG).</div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal()">Cancel</button>
@@ -1156,6 +1156,29 @@ const firebaseConfig = {
   // ESC closes modal
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
+  });
+
+  // Paste image support — works whenever the modal is open
+  document.addEventListener('paste', async (e) => {
+    if (!document.getElementById('modal').classList.contains('open')) return;
+    const items = (e.clipboardData || window.clipboardData)?.items;
+    if (!items) return;
+    let handled = false;
+    for (const it of items) {
+      if (it.kind === 'file' && it.type.startsWith('image/')) {
+        const file = it.getAsFile();
+        if (!file) continue;
+        handled = true;
+        try {
+          const dataUrl = await resizeImage(file, 700, 0.75);
+          currentImages.push(dataUrl);
+          renderImageGroup();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+    if (handled) e.preventDefault();
   });
   document.getElementById('modal').addEventListener('click', (e) => {
     if (e.target.id === 'modal') closeModal();
