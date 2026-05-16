@@ -212,6 +212,18 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
+  a.card-name {
+    color: var(--teal);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--mint);
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  }
+  a.card-name:hover {
+    color: #4a9aa0;
+    text-decoration-color: var(--teal);
+  }
   .card-price {
     font-size: 15px;
     color: var(--accent);
@@ -652,6 +664,10 @@
       <input type="text" id="itemPrice" placeholder="e.g. 89 or £89" />
     </div>
     <div class="field">
+      <label>link (where to buy)</label>
+      <input type="url" id="itemUrl" placeholder="https://…" />
+    </div>
+    <div class="field">
       <label>category</label>
       <select id="itemCategory"></select>
     </div>
@@ -890,9 +906,16 @@ const firebaseConfig = {
     bar.className = 'card-bar';
     const topRow = document.createElement('div');
     topRow.className = 'card-top-row';
-    const name = document.createElement('div');
+    const name = item.url
+      ? document.createElement('a')
+      : document.createElement('div');
     name.className = 'card-name';
     name.textContent = item.name || 'Untitled';
+    if (item.url) {
+      name.href = item.url;
+      name.target = '_blank';
+      name.rel = 'noopener noreferrer';
+    }
     const price = document.createElement('div');
     price.className = 'card-price';
     price.textContent = formatPrice(item.price);
@@ -1016,6 +1039,7 @@ const firebaseConfig = {
     const item = itemId ? state.items.find(it => it.id === itemId) : null;
     document.getElementById('itemName').value = item ? item.name : '';
     document.getElementById('itemPrice').value = item ? item.price : '';
+    document.getElementById('itemUrl').value = item && item.url ? item.url : '';
     currentImages = item ? [...(item.images || [])] : [];
 
     const sel = document.getElementById('itemCategory');
@@ -1115,6 +1139,8 @@ const firebaseConfig = {
   window.saveItem = async function() {
     const name = document.getElementById('itemName').value.trim();
     const price = document.getElementById('itemPrice').value.trim();
+    let url = document.getElementById('itemUrl').value.trim();
+    if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
     const category = document.getElementById('itemCategory').value;
 
     if (!name) { alert('Give it a name first.'); return; }
@@ -1128,7 +1154,7 @@ const firebaseConfig = {
       if (editingId) {
         const item = state.items.find(it => it.id === editingId);
         const updated = {
-          name, price, category,
+          name, price, url, category,
           images: [...currentImages],
           bought: item ? !!item.bought : false,
           createdAt: item ? (item.createdAt || Date.now()) : Date.now()
@@ -1137,7 +1163,7 @@ const firebaseConfig = {
       } else {
         const id = 'i_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
         await setDoc(doc(db, "items", id), {
-          name, price, category,
+          name, price, url, category,
           images: [...currentImages],
           bought: false,
           createdAt: Date.now()

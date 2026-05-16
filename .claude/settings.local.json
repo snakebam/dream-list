@@ -11,7 +11,9 @@
       "Bash(git -C \"C:/Users/jacob/Desktop/dream-list\" merge --no-ff claude/cool-raman-9e2cbc -m \"Merge retro restyle + unlimited images\")",
       "Bash(git -C \"C:/Users/jacob/Desktop/dream-list\" push origin main)",
       "Bash(gh api *)",
-      "Bash(git -C \"C:/Users/jacob/Desktop/dream-list\" merge --ff-only claude/cool-raman-9e2cbc)"
+      "Bash(git -C \"C:/Users/jacob/Desktop/dream-list\" merge --ff-only claude/cool-raman-9e2cbc)",
+      "Bash(git -C \"C:/Users/jacob/Desktop/dream-list\" merge --no-ff claude/cool-raman-9e2cbc -m \"Merge paste-image support\")",
+      "Bash(git -C \"C:/Users/jacob/Desktop/dream-list\" merge --no-ff claude/cool-raman-9e2cbc -m \"Merge product URL links\")"
     ]
   }
 }
